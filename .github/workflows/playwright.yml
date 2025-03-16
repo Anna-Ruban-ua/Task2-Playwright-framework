@@ -25,6 +25,9 @@ jobs:
       - name: 🎭 Install Playwright Browsers
         run: npx playwright install --with-deps
 
+      - name: 📦 Install Allure Commandline
+        run: npm install -g allure-commandline
+
       - name: 🧪 Run Playwright tests
         run: npm run test
 
@@ -45,7 +48,8 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git checkout -B report-branch
+          git fetch origin
+          git checkout report-branch || git checkout -b report-branch
           git rm -rf .
           cp -r allure-report/* .
           git add .
