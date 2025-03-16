@@ -2,7 +2,7 @@
   "name": "task-2.-redmine",
   "version": "1.0.0",
   "scripts": {
-    "test": "npx playwright test",
+    "test": "npx playwright test --reporter=allure",
     "test:headed": "npx playwright test --headed",
     "report": "npx allure generate allure-results --clean -o allure-report",
     "install:all": "npx playwright install"
