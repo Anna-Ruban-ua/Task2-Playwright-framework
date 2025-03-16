@@ -1,4 +1,4 @@
-import { expect, Page, Locator } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 
 export class BasePage {
     protected page: Page;
@@ -12,22 +12,25 @@ export class BasePage {
     }
 
     async fillField(locator: Locator, value: string) {
-        await expect(locator).toBeVisible();
+        await locator.waitFor({ state: 'visible', timeout: 10000 });
         await locator.fill(value);
     }
 
     async clickElement(locator: Locator) {
-        await expect(locator).toBeVisible();
+        await locator.waitFor({ state: 'visible', timeout: 10000 });
+        if (!(await locator.isEnabled())) {
+            throw new Error('Element is not enabled');
+        }
         await locator.click();
     }
 
     async hoverElement(locator: Locator) {
-        await expect(locator).toBeVisible();
+        await locator.waitFor({ state: 'visible', timeout: 10000 });
         await locator.hover();
     }
 
     async getTexts(locator: Locator): Promise<string[]> {
-        await expect(locator).toBeVisible();
+        await locator.waitFor({ state: 'visible', timeout: 10000 });
         return await locator.allInnerTexts();
     }
 }
