@@ -45,7 +45,7 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git checkout --orphan report-branch
+          git checkout -B report-branch
           git rm -rf .
           cp -r allure-report/* .
           git add .
