@@ -7,8 +7,8 @@ export class BasePage {
         this.page = page;
     }
 
-    async goto(endpoint: string) {
-        await this.page.goto(endpoint);
+    async goto(endpoint: string = '') {
+        await this.page.goto(endpoint, { waitUntil: 'load' });
     }
 
     async fillField(locator: Locator, value: string) {
