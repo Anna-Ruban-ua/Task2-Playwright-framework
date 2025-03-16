@@ -52,7 +52,6 @@ jobs:
           git checkout report-branch || git checkout -b report-branch
           rm -rf allure-report/*
           mkdir -p .github/workflows
-          cp .github/workflows/playwright.yml .github/workflows/playwright.yml
           cp -r allure-report/* .
           git add .
           git commit -m "Update Allure report"
