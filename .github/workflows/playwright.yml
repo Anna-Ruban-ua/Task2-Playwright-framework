@@ -75,5 +75,7 @@ jobs:
       - name: 🌐 Enable GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           branch: report-branch
           folder: allure-report
+          clean: true
