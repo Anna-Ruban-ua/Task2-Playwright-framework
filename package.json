@@ -1,0 +1,21 @@
+{
+  "name": "task-2.-redmine",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "report": "npx playwright show-report",
+    "install:all": "npx playwright install"
+  },
+  "keywords": ["playwright", "automation", "testing", "typescript", "redmine", "e2e"],
+  "author": "Anna Ruban",
+  "license": "ISC",
+  "description": "Automated testing suite for Redmine using Playwright and TypeScript",
+  "devDependencies": {
+    "@playwright/test": "^1.51.0",
+    "@types/axios": "^0.9.36",
+    "@types/node": "^22.13.10",
+    "allure-commandline": "^2.33.0",
+    "typescript": "^5.8.2"
+  }
+}
