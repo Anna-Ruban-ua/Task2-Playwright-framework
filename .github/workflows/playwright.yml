@@ -1,13 +1,65 @@
-- name: Deploy report to GitHub Pages branch
-  run: |
-    git config --global user.name "github-actions"
-    git config --global user.email "github-actions@github.com"
-    git fetch origin
-    git checkout report-branch || git checkout -b report-branch
-    rm -rf allure-report/*
-    mkdir -p .github/workflows
-    cp ../.github/workflows/playwright.yml .github/workflows/playwright.yml
-    cp -r allure-report/* .
-    git add .
-    git commit -m "Update Allure report"
-    git push --force origin report-branch
+name: Playwright Tests & Allure Report
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Install Allure Commandline
+        run: npm install -g allure-commandline
+
+      - name: Run Playwright tests
+        run: npm run test
+
+      - name: Copy Allure results from previous runs
+        run: |
+          mkdir -p allure-results
+          if [ -d allure-results-prev ]; then
+            cp -r allure-results-prev/* allure-results/
+          fi
+
+      - name: Generate Allure report
+        run: |
+          npm run report
+          mkdir -p allure-results-prev
+          cp -r allure-results/* allure-results-prev/
+
+      - name: Deploy report to GitHub Pages branch
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git fetch origin
+          git checkout report-branch || git checkout -b report-branch
+          rm -rf allure-report/*
+          mkdir -p .github/workflows
+          cp .github/workflows/playwright.yml .github/workflows/playwright.yml
+          cp -r allure-report/* .
+          git add .
+          git commit -m "Update Allure report"
+          git push --force origin report-branch
+
+      - name: Enable GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: report-branch
+          folder: allure-report
