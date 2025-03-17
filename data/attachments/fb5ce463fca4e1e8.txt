@@ -1,0 +1,101 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: User authentication with valid password
+- Location: /Users/anna/Desktop/Projects/LuxeQuality_Trainee/Task_2_Redmine/tests/TC01LoginTest.spec.ts:4:5
+
+# Error details
+
+```
+Error: expect(received).toBeTruthy()
+
+Received: false
+    at /Users/anna/Desktop/Projects/LuxeQuality_Trainee/Task_2_Redmine/tests/TC01LoginTest.spec.ts:8:43
+```
+
+# Page snapshot
+
+```yaml
+- list:
+  - listitem:
+    - link "My account"
+  - listitem:
+    - link "Sign out"
+- text: Logged in as
+- link "anna.ruban0902"
+- list:
+  - listitem:
+    - link "Home"
+  - listitem:
+    - link "My page"
+  - listitem:
+    - link "Projects"
+  - listitem:
+    - link "Help"
+- link "Search"
+- text: ":"
+- textbox "Search:"
+- text: Jump to a project...
+- heading "Redmine" [level=1]
+- insertion
+- text: "Add:"
+- combobox "Add":
+  - option [selected]
+  - option "Issues assigned to me" [disabled]
+  - option "Reported issues" [disabled]
+  - option "Updated issues"
+  - option "Watched issues"
+  - option "Issues"
+  - option "Latest news"
+  - option "Calendar"
+  - option "Documents"
+  - option "Spent time"
+  - option "Activity"
+- heading "My page" [level=2]
+- link "Delete"
+- link "Options"
+- heading "Issues assigned to me (0)" [level=3]:
+  - link "Issues assigned to me"
+  - text: (0)
+- paragraph: No data to display
+- link "Delete"
+- link "Options"
+- heading "Reported issues (0)" [level=3]:
+  - link "Reported issues"
+  - text: (0)
+- paragraph: No data to display
+- text: Powered by
+- link "Redmine"
+- text: © 2006-2023 Jean-Philippe Lang
+- log
+- log
+- log
+- log
+- log
+- log
+- log
+- log
+- log
+- log
+```
+
+# Test source
+
+```ts
+   1 | import { test, expect } from '../fixtures/loginFixture';
+   2 | import { MyPage } from '../pages/MyPage';
+   3 |
+   4 | test('User authentication with valid password', async ({ loginPage, validLoginData, page }) => {
+   5 |     await loginPage.login(validLoginData.username, validLoginData.password);
+   6 |
+   7 |     const myPage = new MyPage(page);
+>  8 |     expect(await myPage.isUserLoggedIn()).toBeTruthy();
+     |                                           ^ Error: expect(received).toBeTruthy()
+   9 | });
+  10 |
+```
