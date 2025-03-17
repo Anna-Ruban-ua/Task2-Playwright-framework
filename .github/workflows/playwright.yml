@@ -38,6 +38,9 @@ jobs:
           ref: report-branch
           path: allure-history
 
+      - name: 🧪 Run Playwright tests
+        run: npm run test || echo "⚠️ Тести завершилися з помилкою, але продовжуємо"
+
       - name: 📊 Generate Allure report with history
         run: |
           mkdir -p allure-results/history
