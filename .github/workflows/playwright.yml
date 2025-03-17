@@ -16,6 +16,9 @@ jobs:
         with:
           fetch-depth: 0 # Дозволяє оновлювати report-branch
 
+      - name: 🔄 Переключення на main
+        run: git checkout main
+
       - name: 🛠 Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -34,8 +37,9 @@ jobs:
         run: |
           git fetch origin report-branch || echo "⚠️ report-branch не знайдено, створюємо новий"
           git checkout report-branch || git checkout -b report-branch
-          mkdir -p allure-history
+          mkdir -p allure-results/history  # ✅ Виправлено: створюємо allure-results перед копіюванням
           cp -r allure-history allure-results/history || echo "⚠️ Попередня історія відсутня"
+          git checkout main # Повертаємось у основну гілку перед тестами
 
       - name: 🧪 Run Playwright tests
         run: npm run test || echo "⚠️ Тести завершилися з помилкою, але продовжуємо"
