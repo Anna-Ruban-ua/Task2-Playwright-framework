@@ -33,8 +33,19 @@ jobs:
       - name: 🧪 Run Playwright tests
         run: npm run test || echo "⚠️ Тести завершилися з помилкою, але продовжуємо"
 
-      - name: 📊 Generate Allure report
-        run: npm run report
+      - name: 📥 Get previous Allure history
+        uses: actions/checkout@v4
+        if: always()
+        continue-on-error: true
+        with:
+          ref: report-branch
+          path: allure-history
+
+      - name: 📊 Generate Allure report with history
+        run: |
+          mkdir -p allure-history
+          cp -r allure-history/* allure-results/ || echo "⚠️ Немає попередніх звітів"
+          npm run report
 
       - name: 📂 Логування перед копіюванням
         run: |
@@ -56,16 +67,12 @@ jobs:
           # Очистка старого звіту
           git rm -rf .
           
-          # Копіюємо новий звіт
-          if [ -d allure-report ] && [ "$(ls -A allure-report)" ]; then
-            echo "✅ Копіюємо звіт..."
-            cp -r allure-report/* .
-          else
-            echo "⚠️ Немає файлів для копіювання!"
-          fi
+          # Копіюємо новий звіт та історію
+          mkdir -p allure-history
+          cp -r allure-report/* allure-history/
           
-          git add .
-          git commit -m "🔄 Автоматичне оновлення Allure report" || echo "⚠️ Немає змін для коміту"
+          git add allure-history
+          git commit -m "🔄 Оновлення Allure history" || echo "⚠️ Немає змін для коміту"
           git push --force origin report-branch || echo "⚠️ Помилка пушу"
 
       - name: 🌐 Enable GitHub Pages
