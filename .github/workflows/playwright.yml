@@ -30,31 +30,21 @@ jobs:
       - name: 📦 Install Allure Commandline
         run: npm install -g allure-commandline
 
+      - name: 📥 Отримання попередньої історії Allure
+        run: |
+          git fetch origin report-branch || echo "⚠️ report-branch не знайдено, створюємо новий"
+          git checkout report-branch || git checkout -b report-branch
+          mkdir -p allure-history
+          cp -r allure-history allure-results/history || echo "⚠️ Попередня історія відсутня"
+
       - name: 🧪 Run Playwright tests
         run: npm run test || echo "⚠️ Тести завершилися з помилкою, але продовжуємо"
 
-      - name: 📥 Get previous Allure history
-        uses: actions/checkout@v4
-        if: always()
-        continue-on-error: true
-        with:
-          ref: report-branch
-          path: allure-history
-
       - name: 📊 Generate Allure report with history
         run: |
-          mkdir -p allure-history
-          cp -r allure-history/* allure-results/ || echo "⚠️ Немає попередніх звітів"
+          mkdir -p allure-results/history
+          cp -r allure-history allure-results/history || echo "⚠️ Немає попередньої історії"
           npm run report
-
-      - name: 📂 Логування перед копіюванням
-        run: |
-          if [ -d allure-report ]; then
-            echo "📂 Папка allure-report існує"
-            ls -l allure-report
-          else
-            echo "❌ Папка allure-report не існує"
-          fi
 
       - name: 🚀 Deploy report to GitHub Pages branch
         run: |
@@ -71,7 +61,7 @@ jobs:
           mkdir -p allure-history
           cp -r allure-report/* allure-history/
           
-          git add allure-history
+          git add allure-history allure-report
           git commit -m "🔄 Оновлення Allure history" || echo "⚠️ Немає змін для коміту"
           git push --force origin report-branch || echo "⚠️ Помилка пушу"
 
