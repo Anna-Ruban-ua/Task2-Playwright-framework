@@ -1,0 +1,90 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: User authentication with valid data
+- Location: /Users/anna/Desktop/Projects/LuxeQuality_Trainee/Task_2_Redmine/tests/TC01LoginTest.spec.ts:5:5
+
+# Error details
+
+```
+Error: Timed out 5000ms waiting for expect(locator).toBeVisible()
+
+Locator: locator('#loggedas')
+Expected: visible
+Received: <element(s) not found>
+Call log:
+  - expect.toBeVisible with timeout 5000ms
+  - waiting for locator('#loggedas')
+
+    at MyPage.verifyLoginSuccess (/Users/anna/Desktop/Projects/LuxeQuality_Trainee/Task_2_Redmine/pages/MyPage.ts:15:41)
+    at /Users/anna/Desktop/Projects/LuxeQuality_Trainee/Task_2_Redmine/tests/TC01LoginTest.spec.ts:13:18
+```
+
+# Page snapshot
+
+```yaml
+- list:
+  - listitem:
+    - link "Sign in"
+  - listitem:
+    - link "Register"
+- list:
+  - listitem:
+    - link "Home"
+  - listitem:
+    - link "Projects"
+  - listitem:
+    - link "Help"
+- link "Search"
+- text: ":"
+- textbox "Search:"
+- text: Jump to a project...
+- heading "Redmine" [level=1]
+- insertion
+- text: Invalid user or password Login
+- textbox "Login": user_ry04z6
+- text: Password
+- link "Lost password"
+- textbox "Password Lost password"
+- checkbox "Stay logged in"
+- text: Stay logged in
+- button "Login"
+- text: Powered by
+- link "Redmine"
+- text: © 2006-2023 Jean-Philippe Lang
+- log
+```
+
+# Test source
+
+```ts
+   1 | import { BasePage } from './BasePage'
+   2 | import { expect, Page, Locator } from '@playwright/test';
+   3 |
+   4 | export class MyPage extends BasePage {
+   5 |     private loggedAsText: Locator;
+   6 |     private logoutButton: Locator;
+   7 |
+   8 |     constructor(page: Page) {
+   9 |         super(page);
+  10 |         this.loggedAsText = page.locator('#loggedas');
+  11 |         this.logoutButton = page.locator('.logout');
+  12 |     }
+  13 |
+  14 |     async verifyLoginSuccess() {
+> 15 |         await expect(this.loggedAsText).toBeVisible();
+     |                                         ^ Error: Timed out 5000ms waiting for expect(locator).toBeVisible()
+  16 |     }
+  17 |
+  18 |     async logout() {
+  19 |         await this.clickElement(this.logoutButton);
+  20 |         await expect(this.loggedAsText).not.toBeVisible();
+  21 |     }
+  22 |
+  23 | }
+```

@@ -11,8 +11,13 @@ export class MyPage extends BasePage {
         this.logoutButton = page.locator('.logout');
     }
 
-    async verifyLoginSuccess() {
-        await expect(this.loggedAsText).toBeVisible();
+    async isUserLoggedIn(): Promise<boolean> {
+        try {
+            await this.loggedAsText.waitFor({ state: 'visible', timeout: 5000 });
+            return await this.loggedAsText.isVisible();
+        } catch (error) {
+            return false;
+        }
     }
 
     async logout() {

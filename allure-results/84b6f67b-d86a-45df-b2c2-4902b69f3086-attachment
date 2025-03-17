@@ -1,0 +1,72 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: User authentication with valid password
+- Location: /Users/anna/Desktop/Projects/LuxeQuality_Trainee/Task_2_Redmine/tests/TC01LoginTest.spec.ts:4:5
+
+# Error details
+
+```
+TimeoutError: locator.waitFor: Timeout 10000ms exceeded.
+Call log:
+  - waiting for locator('#username') to be visible
+
+    at LoginPage.fillField (/Users/anna/Desktop/Projects/LuxeQuality_Trainee/Task_2_Redmine/pages/BasePage.ts:15:23)
+    at LoginPage.login (/Users/anna/Desktop/Projects/LuxeQuality_Trainee/Task_2_Redmine/pages/LoginPage.ts:19:20)
+    at /Users/anna/Desktop/Projects/LuxeQuality_Trainee/Task_2_Redmine/tests/TC01LoginTest.spec.ts:5:21
+```
+
+# Page snapshot
+
+```yaml
+- heading "This website is under heavy load (queue full)" [level=2]
+- paragraph: We're sorry, too many people are accessing this website at the same time. We're working on this problem. Please try again later.
+```
+
+# Test source
+
+```ts
+   1 | import { Page, Locator } from '@playwright/test';
+   2 |
+   3 | export class BasePage {
+   4 |     protected page: Page;
+   5 |
+   6 |     constructor(page: Page) {
+   7 |         this.page = page;
+   8 |     }
+   9 |
+  10 |     async goto(endpoint: string = '') {
+  11 |         await this.page.goto(endpoint, { waitUntil: 'load' });
+  12 |     }
+  13 |
+  14 |     async fillField(locator: Locator, value: string) {
+> 15 |         await locator.waitFor({ state: 'visible', timeout: 10000 });
+     |                       ^ TimeoutError: locator.waitFor: Timeout 10000ms exceeded.
+  16 |         await locator.fill(value);
+  17 |     }
+  18 |
+  19 |     async clickElement(locator: Locator) {
+  20 |         await locator.waitFor({ state: 'visible', timeout: 10000 });
+  21 |         if (!(await locator.isEnabled())) {
+  22 |             throw new Error('Element is not enabled');
+  23 |         }
+  24 |         await locator.click();
+  25 |     }
+  26 |
+  27 |     async hoverElement(locator: Locator) {
+  28 |         await locator.waitFor({ state: 'visible', timeout: 10000 });
+  29 |         await locator.hover();
+  30 |     }
+  31 |
+  32 |     async getTexts(locator: Locator): Promise<string[]> {
+  33 |         await locator.waitFor({ state: 'visible', timeout: 10000 });
+  34 |         return await locator.allInnerTexts();
+  35 |     }
+  36 | }
+  37 |
+```
