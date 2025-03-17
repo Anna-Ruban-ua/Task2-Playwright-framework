@@ -16,9 +16,6 @@ jobs:
         with:
           fetch-depth: 0 # Дозволяє оновлювати report-branch
 
-      - name: 🔄 Переключення на main
-        run: git checkout main
-
       - name: 🛠 Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -33,39 +30,33 @@ jobs:
       - name: 📦 Install Allure Commandline
         run: npm install -g allure-commandline
 
-      - name: 📥 Отримання попередньої історії Allure
-        run: |
-          git fetch origin report-branch || echo "⚠️ report-branch не знайдено, створюємо новий"
-          git checkout report-branch || git checkout -b report-branch
-          mkdir -p allure-results/history  # ✅ Виправлено: створюємо allure-results перед копіюванням
-          cp -r allure-history allure-results/history || echo "⚠️ Попередня історія відсутня"
-          git checkout main # Повертаємось у основну гілку перед тестами
-
-      - name: 🧪 Run Playwright tests
-        run: npm run test || echo "⚠️ Тести завершилися з помилкою, але продовжуємо"
+      - name: 📥 Get previous Allure history
+        uses: actions/checkout@v4
+        if: always()
+        continue-on-error: true
+        with:
+          ref: report-branch
+          path: allure-history
 
       - name: 📊 Generate Allure report with history
         run: |
           mkdir -p allure-results/history
-          cp -r allure-history allure-results/history || echo "⚠️ Немає попередньої історії"
+          cp -r allure-history/* allure-results/history/ || echo "⚠️ Немає попередніх звітів"
           npm run report
 
-      - name: 🚀 Deploy report to GitHub Pages branch
+      - name: 🚀 Deploy report to report-branch
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
+
           git fetch origin
           git checkout report-branch || git checkout -b report-branch
-          
-          # Очистка старого звіту
-          git rm -rf .
-          
-          # Копіюємо новий звіт та історію
+
+          # Оновлюємо історію
           mkdir -p allure-history
           cp -r allure-report/* allure-history/
-          
-          git add allure-history allure-report
+
+          git add allure-history
           git commit -m "🔄 Оновлення Allure history" || echo "⚠️ Немає змін для коміту"
           git push --force origin report-branch || echo "⚠️ Помилка пушу"
 
